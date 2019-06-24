@@ -1,0 +1,291 @@
+Bootstrap 4 Essential Training
+
+
+What is Module ?
+	Angular apps are modular and Angular has its own modularity system called NgModules. NgModules are containers for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities
+	Metadata
+		imports
+		providers
+		declarations
+		exports
+		bootstrap
+	
+What is Component
+	Component defines screen. component controls screen called a view.
+	Metadata
+		selector:    'app-hero-list',
+		templateUrl: './hero-list.component.html',
+		providers:  [ HeroService ]
+		
+What is root Module ?
+	ngModule
+	
+interpolation
+	The easiest way to display a component property (As in Java - The easiest way to display a Object variable) is to bind the property name through interpolation.
+	With interpolation, you put the property name in the view template, enclosed in double curly braces: {{myHero}}.
+
+---------------------------------------------------------------------------------------------------
+var vs let
+	var	-	Scope of var is within nearest function. Below method is a valid method. Because 'i' have scope within doSomething() function which is a nearest method.
+	let -	Scope of let is within nearest block. Below method will show compile time error. Because 'i' have scope within 'for' loop only.
+	
+	function doSomething() {
+		for(var / let i = 0; i < 5; i++) {
+			console.log(i)
+		}
+		
+		console.log("Finally : " + i)
+	}
+	
+----------------------------------------------------------------------------------------------------
+Type
+	let a: number;
+	let b: String;
+	let c: boolean;
+	let d: any;
+	let e: number[] = [1, 2, 3];
+	let f: any[] = [1, 'Vishal', true];
+
+	const ColorRed = 0;
+	const ColorGreen = 1;
+	const ColorBlue = 2;
+
+	enum COLOR  {RED, GREEN, BLUE};
+	let bgCoor = COLOR.RED;
+	
+
+----------------------------------------------------------------------------------------------------
+Optional parameters to method
+
+	You can declare a parameter is either optional. As follows
+
+		constructor(xx?: number, yy?: number) {
+			this.x = xx;
+			this.y = yy;
+		}
+		
+	'constructor' method having two parameters as xx and yy. Those are optional using '?'
+	
+----------------------------------------------------------------------------------------------------
+Access Modifier
+	use following keyword
+		1.	private
+		2.	protected
+		3.	public
+	
+	By default all members of class are 'public'.
+
+----------------------------------------------------------------------------------------------------
+Property binding ( [property] )
+	Used to bind properties of DOM object. To achieve this property need to specify in square bracket '[]'. Passes the value of selectedHero from the parent HeroListComponent to the hero property of the child HeroDetailComponent.
+
+----------------------------------------------------------------------------------------------------
+Class Binding
+	This allows to bind class of element based on certain conditions.
+	For example, in below code 'Star' element get filled on click and susiquent next click it empty then filled and so on.
+		<span class="glyphicon"
+		  [class.glyphicon-star] = "isFavorite"
+		  [class.glyphicon-star-empty] = "!isFavorite"
+		  (click) = "onFavioureClick()">
+		</span>
+
+----------------------------------------------------------------------------------------------------
+Style Binding
+	[style.<BelowProperty>] = "<VALUE>"
+	https://www.w3schools.com/jsref/dom_obj_style.asp
+	
+----------------------------------------------------------------------------------------------------
+Event Binding
+	Events like Keystrokes, MouseMovements, clicks and so on..
+	Use parenthesis "()" to pass a event name.
+	E.g. (click) = "onClick()"
+	
+	Event object can be passed as below example
+		(click) = "onClick($event)"	
+		onClick($event) {
+			console.log($event);
+		}
+		
+Event bubling
+	All parent elements event get triggered when event of cascaded element get triggered. This is called as a bubbling
+	
+	To stop 'event bubbling'. Add $event.stopPropogation() in event method of cascaded element.
+
+----------------------------------------------------------------------------------------------------
+Template variable
+	Is a technique to pass a value of element. Assign a name to element prefix with '#' and pass that name in event method.
+	
+	E.g.)
+		<input #fName (keyup.enter) = "enterePressed(fName.value)" />
+		In this example value of input element will be assign to 'fName'. And this value will pass to method enterePressed as fName.value.
+		
+----------------------------------------------------------------------------------------------------
+Two way binding
+	Usig Two way binding, we can pass valur from the compoent to view and view to complnent. With 'Template variable' we can pass value of element to a event method. We can not achieve encapsulation with this technique. This issue can be resolve using 'Two way binding'.
+	It is a technique to pass a value from Component to View and View to Component (Component <-> View).
+	This can be achieved decorator named 'ngModel'. Following example shows how can you achieve this
+	
+		<input [(ngModel) = "email" (click) = onClick() />
+		export class CoursesComponent {
+			email = "vishal@gmail.com";
+			onClick() {
+				console.log(email);
+			}
+		}
+	
+	In above example, when element get loaded then input element get loaded with value 'vishal@gmail'. When change to any other value then its new value get binded to email property. This is because of 'ngModel' directive which we have declared in input element.
+	
+	'ngModel' directive is part of '@angular/forms'. You have to declare NgModule in 'imports' section. declare 
+	
+----------------------------------------------------------------------------------------------------
+Pipes
+	It is used to Format data. Angular has some build in Pipes such as
+		Uppercase
+		Lowercase
+		Decimal
+		Currency
+		Percent
+	Following is few example of pipe.
+		{{cc.title | uppercase | lowercase}} <br/>			// 	uppercase and lowercase are pipes
+        {{cc.students | number}} <br/>						//	converts into number format
+        {{cc.rating | number : '1.2-2'}} <br/>        		//	converts into number format. With min and max 2 decimals
+        {{cc.price | currency:'INR':true:'1.1-1'}} <br/>	//	converts into INR with symbol and min and max 2 decimals
+        {{cc.releaseDate | date : 'shortDate'}} <br/>		//	converts into 'shortDate' as 5/25/19
+		
+	We can create custom Pipes as well as follows. Register in NgModule in 'declarations' section.
+		import { Pipe, PipeTransform } from '@angular/core'
+		
+		@Pipe ({
+			name : 'summary'
+		})
+		export class SummaryPipe implements PipeTransform {
+			transform(txt: String, limit?: number) {
+				if(!txt ) {
+					return null;
+				}
+				let actualLimit = limit > 0 ? limit : 50;
+				return txt.substring(0, actualLimit) + "...";
+			}
+
+		}
+
+----------------------------------------------------------------------------------------------------
+Input Properties
+	You can pass a parameter to a component. This can be achievedwith 'Input Properties'. Refer a following piece of code.
+	From app.component.html I have passed "isSelected" value in 'favorite-star' component.
+		<favorite-star [isFavorite] = "isSelected"></favorite-star>
+		
+	Then this passed value is accepted by 'favorite-star' component as follows
+		@Input('isFavorite') isFavorite : boolean;
+		
+----------------------------------------------------------------------------------------------------
+Output Properties
+	Component can return a value in case of event. This can be achieved as follows
+	app.component.html
+		<favorite-star (change) = "checkNewVal($event)"></favorite-star>
+	
+	favorite.component.ts
+		@Output('change') clicked = new EventEmitter();
+		onFavioureClick() {
+			this.isFavorite = !this.isFavorite;
+			this.clicked.emit({ isFavirouteNewVal : this.isFavorite});
+		}
+		
+	app.component.ts
+		checkNewVal(newVal: FavirouteChangeDetails) {
+			console.log("New Value = " + newVal.isFavirouteNewVal)
+		}
+		
+	Value is returned from 'onFavioureClick()' method of 'favorite.component.ts'. This is emitted by EventEmitter clicked. This eitted value then passed to a method 'checkNewVal' method of 'app.component.ts'.
+	
+----------------------------------------------------------------------------------------------------
+Directives
+	Are used to manipulate DOM element
+	
+Structural Directives
+	It modifies structure of DOM. It is prefix with '*'. Following are some of Structural Directives
+		*ngFor
+		*ngIf
+		*ngSwitch
+	
+Attribute Directives
+	An Attribute directive changes the appearance or behavior of a DOM element.
+
+
+ng-content and ng-container
+	(1)	<div class="panel-body">
+			<ng-content select = ".body"></ng-content>
+		</div>
+	
+	(2)	<demo-panel>
+		  <ng-container class="body">
+			<h2>Body Header</h2>
+			<p>This is body content...</p>
+		  </ng-container>
+		</demo-panel>
+
+	Example (1) is a 'ng-content'. It has a property called select. It has value as 'select = ".body"'
+	Example (2) is a 'ng-container'. It refer 'ng-content' using 'class = "body"'. Then 'ng-content' is replce with 'ng-container' data.
+
+---------------------------------------------------------------------------------------------------
+Lifecycle Hooks
+	sequence is as follows:
+		ngOnChanges()
+		ngOnInit()
+		ngDoCheck()
+		ngAfterContentInit()
+		ngAfterContentChecked()
+		ngAfterViewInit()
+		ngAfterViewChecked()
+		ngOnDestroy()
+
+
+ng-template
+	This is used to hold number of elements and same can be refer. This can declare like <ng-template #coursess>
+		<div *ngIf = "courses.length > 0; then coursess else noCourses"></div>
+		<ng-template #coursess>
+		  <ul>
+			<li *ngFor = "let course of courses">{{course}}</li>
+		  </ul>
+		</ng-template>
+		<ng-template #noCourses>
+		  <h2>No Courses</h2>
+		</ng-template>	
+
+ngClass
+	Using ngClass directive we do not need to use multiple class binding. Just we have to mention conditions in JSON format as below:
+		[ngClass] = {
+			'glyphicon-star' : isFavorite,
+			'glyphicon-star-empty' : !isFavorite
+		}
+		  
+----------------------------------------------------------------------------------------------------
+ngStyle
+	Using ngStyle directive we do not need to use multiple style bindings. Just we have to mention condition in JSON format as below:
+		[ngStyle] {
+			'backgroundColor' : 'white',
+			'color' : 'red'
+		}
+
+----------------------------------------------------------------------------------------------------
+Safe travesal
+	If value in a object is null in that case HTML fails to load. To resolve this issue we can use 'Safe Travesal' as follows:
+	
+		task.assignment?.name
+	
+	Above expression will parse iff assignment is present. If it is null or not present then it will not parse.
+----------------------------------------------------------------------------------------------------
+Custom Directives
+	
+
+----------------------------------------------------------------------------------------------------
+
+Reactive Form
+	Useful in case of more customization.
+	It gives more control over complex validaton.
+	Unit testing is possible
+	
+Template driven form
+	Useful in case of basic requirement
+	Useful in case of simple validation
+	
